@@ -1,0 +1,26 @@
+@startuml Diagrama de clases
+
+class Usuario {
+    -nombre: String
+    -telefono: int
+    -cuentas: List<CuentaBancaria>
+    +Usuario() //Constructor
+    +getNombre(): String
+    +getTelefono(): int
+    +anadirCuenta()
+    +sacarDinero()
+    +ingresarDinero()
+    +hacerBizum()
+}
+
+class CuentaBancaria {
+    -saldo: double
+    -telefono: int 
+    +CuentaBancaria() //Constructor
+    +getSaldo(): double
+    +getTelefono(): int
+}
+
+Usuario o-- CuentaBancaria
+
+@enduml

@@ -34,7 +34,7 @@
       </AnchorPane>
       <AnchorPane prefHeight="550.0" prefWidth="530.0">
          <children>
-            <Button fx:id="btnEntrar" layoutX="148.0" layoutY="408.0" mnemonicParsing="false" onAction="#cambiarInicio" prefHeight="46.0" prefWidth="234.0" style="-fx-background-color: #ede5ce; -fx-cursor: hand;" text="Entrar" textFill="#a70c82">
+            <Button fx:id="btnEntrar" layoutX="148.0" layoutY="408.0" mnemonicParsing="false" onAction="#iniciarSesion" prefHeight="46.0" prefWidth="234.0" style="-fx-background-color: #ede5ce; -fx-cursor: hand;" text="Entrar" textFill="#a70c82">
                <font>
                   <Font name="Cambria" size="24.0" />
                </font>
@@ -76,7 +76,7 @@
                   <Font name="Cambria" size="15.0" />
                </font>
             </Label>
-            <Button fx:id="btnRegistrar" layoutX="283.0" layoutY="468.0" mnemonicParsing="false" onAction="#cambiarPantalla" style="-fx-background-color: transparent; -fx-cursor: hand;" text="Regístrate" textFill="#f448fa" underline="true">
+            <Button fx:id="btnRegistrar" layoutX="283.0" layoutY="468.0" mnemonicParsing="false" onAction="#cambiarRegistrar" style="-fx-background-color: transparent; -fx-cursor: hand;" text="Regístrate" textFill="#f448fa" underline="true">
                <font>
                   <Font name="Cambria" size="15.0" />
                </font>

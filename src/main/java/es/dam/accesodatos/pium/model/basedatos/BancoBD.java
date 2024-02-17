@@ -25,42 +25,37 @@ public class BancoBD implements BancoBDDAO {
 
     @Override
     public void registrarUsuario(Usuario usuario) throws SQLException {
-        final String INSERTAR = "INSERT INTO usuario (nombre, apellido, telefono, contrasena, tiene_bizum) VALUES (?,?,?,?,?)";
+        final String INSERTAR = "INSERT INTO usuarios (nombre, apellido, telefono, contrasena, tiene_bizum) VALUES (?,?,?,?,?)";
 
         PreparedStatement ps = null;
-        
-        try {
-            ps = conn.prepareStatement(INSERTAR);
-            ps.setString(1, usuario.getNombre());
-            ps.setString(2, usuario.getApellidos());
-            ps.setString(3, usuario.getTelefono());
-            ps.setString(4, usuario.getContrasena());
-            ps.setBoolean(5, usuario.getTieneBizum());
-            ps.executeQuery();
-        } finally {
-            if (ps != null) {
-                ps.close();
-            }
-            if (conn!= null) {
-                conn.close();
-            }       
-        }
+
+        ps = conn.prepareStatement(INSERTAR);
+        ps.setString(1, usuario.getNombre());
+        ps.setString(2, usuario.getApellidos());
+        ps.setString(3, usuario.getTelefono());
+        ps.setString(4, usuario.getContrasena());
+        ps.setBoolean(5, usuario.getTieneBizum());
+        ps.executeUpdate();
+
     }
 
     @Override
     public boolean iniciarSesion(String nombre, String contrasena) throws SQLException {
-        final String CONSULTA = "SELECT * FROM usuario WHERE nombre = ? AND contrasena = ?";
+        boolean inicioSesion = false;
+        final String CONSULTA = "SELECT * FROM usuarios WHERE nombre = ? AND contrasena = ?";
         PreparedStatement ps = conn.prepareStatement(CONSULTA);
         ps.setString(1, nombre);
         ps.setString(2, contrasena);
         ResultSet rs = ps.executeQuery();
 
-        boolean usuarioEncontrado = rs.next();
+        if (rs.next()) {
+            inicioSesion = true;
+        }
 
         ps.close();
         rs.close();
 
-        return usuarioEncontrado;
+        return inicioSesion;
     }
 
 }

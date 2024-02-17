@@ -56,7 +56,7 @@
                   <Font name="Cambria" size="20.0" />
                </font>
             </TextField>
-            <Button fx:id="btnRegistrarme" layoutX="151.0" layoutY="408.0" mnemonicParsing="false" onAction="#cambiarPantalla" prefHeight="46.0" prefWidth="234.0" style="-fx-background-color: #ede5ce; -fx-cursor: hand;" text="Registrarme" textFill="#a70c82">
+            <Button fx:id="btnRegistrarme" layoutX="151.0" layoutY="408.0" mnemonicParsing="false" onAction="#registrarUsuario" prefHeight="46.0" prefWidth="234.0" style="-fx-background-color: #ede5ce; -fx-cursor: hand;" text="Registrarme" textFill="#a70c82">
                <font>
                   <Font name="Cambria" size="24.0" />
                </font>
