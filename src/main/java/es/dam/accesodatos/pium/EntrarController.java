@@ -44,13 +44,20 @@ public class EntrarController extends ControladorVistas {
         boolean inicioSesion = daoBanco.iniciarSesion(nombre, contrasena);
 
         if (inicioSesion) {
-            App.setRoot("inicio");
+            //Guardar el nombre del usuario en controlador externo para usarlo en otra vista
+            ControladorVistas.getInstancia().setNombreCompartido(nombre);
+            //Método de cambio de escena que acepta un parámetro más
+            App.setRooot("inicio", nombre);
         } else {
-            mostrarAviso("Error", "Inicio de sesión fallido. Por favor, verifica tus credenciales e inténtalo nuevamente", AlertType.ERROR);
+            mostrarAviso("Error",
+                    "Inicio de sesión fallido. Por favor, verifica tus credenciales e inténtalo nuevamente",
+                    AlertType.ERROR);
+            tfUsuario.clear();
+            tfContrasena.clear();
         }
     }
 
-    private void iniciarConexion () throws SQLException {
+    private void iniciarConexion() throws SQLException {
         daoBanco = BancoBDFactory.getDAO(BancoBDFactory.MODO_SQL);
     }
 

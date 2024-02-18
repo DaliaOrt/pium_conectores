@@ -10,9 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Alert.AlertType;
 
 public class RegistrarController extends ControladorVistas {
@@ -22,12 +20,6 @@ public class RegistrarController extends ControladorVistas {
 
     @FXML
     private Button btnRegistrarme;
-
-    @FXML
-    private RadioButton rbNo;
-
-    @FXML
-    private RadioButton rbSi;
 
     @FXML
     private TextField tfApellido;
@@ -41,19 +33,6 @@ public class RegistrarController extends ControladorVistas {
     private static BancoBDDAO daoBanco;
 
     @FXML
-    private TextField tfTelefono;
-
-    @FXML
-    public void initialize() {
-        //Hacer que solamente se pueda seleccionar una opción
-        ToggleGroup toggleGroup = new ToggleGroup();
-        rbSi.setToggleGroup(toggleGroup);
-        rbNo.setToggleGroup(toggleGroup);
-
-        rbSi.setSelected(true);
-    }
-
-    @FXML
     void cambiarEntrar(ActionEvent event) throws IOException {
         App.setRoot("entrar");
     }
@@ -62,14 +41,12 @@ public class RegistrarController extends ControladorVistas {
     void registrarUsuario(ActionEvent event) throws IOException, SQLException {
         String nombre = tfNombre.getText().trim();
         String apellido = tfApellido.getText().trim();
-        String telefono = tfTelefono.getText().trim();
         String contrasena = tfContrasena.getText().trim();
-        boolean tiene_bizum = rbSi.isSelected();
         iniciarConexion();
 
-        if (!nombre.isEmpty() && !apellido.isEmpty() && !telefono.isEmpty() &&!contrasena.isEmpty()) {
+        if (!nombre.isEmpty() && !apellido.isEmpty() &&!contrasena.isEmpty()) {
             try {
-                Usuario usuario = new Usuario(nombre, apellido, telefono, contrasena, tiene_bizum);
+                Usuario usuario = new Usuario(nombre, apellido, contrasena);
                 daoBanco.registrarUsuario(usuario);
                 mostrarAviso("Éxito", "Usuario registrado correctamente", AlertType.INFORMATION);
                 App.setRoot("entrar");

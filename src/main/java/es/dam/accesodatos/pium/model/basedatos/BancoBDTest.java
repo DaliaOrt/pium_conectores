@@ -1,7 +1,9 @@
 package es.dam.accesodatos.pium.model.basedatos;
 
 import java.sql.SQLException;
+import java.util.List;
 
+import es.dam.accesodatos.pium.model.CuentaBancaria;
 import es.dam.accesodatos.pium.model.Usuario;
 
 public class BancoBDTest implements BancoBDDAO {
@@ -16,6 +18,36 @@ public class BancoBDTest implements BancoBDDAO {
     public void registrarUsuario(Usuario usuario) throws SQLException {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'registrarUsuario'");
+    }
+
+    @Override
+    public List<CuentaBancaria> mostrarCuentas(String nombre) throws SQLException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'mostrarCuentas'");
+    }
+
+    @Override
+    public Usuario obtenerUsuario(String nombreUsuario) throws SQLException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'obtenerUsuario'");
+    }
+
+    @Override
+    public double obtenerSaldo() throws SQLException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'obtenerSaldo'");
+    }
+
+    @Override
+    public void ActualizarSaldo(double nuevaCantidad) throws SQLException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'ActualizarSaldo'");
+    }
+
+    @Override
+    public void crearCuenta() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'crearCuenta'");
     }
 
 }

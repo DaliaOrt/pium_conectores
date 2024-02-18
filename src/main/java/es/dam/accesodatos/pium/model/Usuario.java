@@ -1,20 +1,22 @@
 package es.dam.accesodatos.pium.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Usuario {
 
     private String nombre;
     private String apellidos;
-    private String telefono;
     private String contrasena;
-    private boolean tieneBizum;
+    private List<CuentaBancaria> cuentas = new ArrayList<CuentaBancaria>();
     
-    public Usuario(String nombre, String apellidos, String telefono, String contrasena, boolean tieneBizum) {
+    public Usuario(String nombre, String apellidos, String contrasena) {
         this.nombre = nombre;
         this.apellidos = apellidos;
-        this.telefono = telefono;
         this.contrasena = contrasena;
-        this.tieneBizum = tieneBizum;
     }
+
+    public Usuario() {}
 
     public String getNombre() {
         return nombre;
@@ -24,22 +26,17 @@ public class Usuario {
         return apellidos;
     }
 
-    public String getTelefono() {
-        return telefono;
-    }
 
     public String getContrasena() {
         return contrasena;
     }
 
-    public boolean getTieneBizum() {
-        return tieneBizum;
+    public List<CuentaBancaria> getCuentas() {
+        return cuentas;
     }
 
-    @Override
-    public String toString() {
-        return "Usuario [nombre=" + nombre + ", apellidos=" + apellidos + ", telefono=" + telefono
-                + ", contrasena=" + contrasena + ", tieneBizum=" + tieneBizum + "]";
+    public void agregarCuenta(CuentaBancaria cuenta) {
+        cuentas.add(cuenta);
     }
     
 }
