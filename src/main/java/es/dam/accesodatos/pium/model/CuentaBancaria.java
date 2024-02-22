@@ -29,5 +29,21 @@ public class CuentaBancaria {
     public int getNumCuenta() {
         return numCuenta;
     }
+
+    public void setNumCuenta(int numCuenta) {
+        this.numCuenta = numCuenta;
+    }
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
+    public void setSaldo(double saldo) {
+        this.saldo = saldo;
+    }
+
+    public void setTieneBizum(boolean tieneBizum) {
+        this.tieneBizum = tieneBizum;
+    }
     
 }

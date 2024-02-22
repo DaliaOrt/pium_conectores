@@ -16,5 +16,5 @@ public interface BancoBDDAO {
     public Usuario obtenerUsuario(String nombreUsuario) throws SQLException;
     public int obtenerIdUsuario(String nombreUsuario) throws SQLException;
     public double obtenerSaldo() throws SQLException;
-    public void ActualizarSaldo(double nuevaCantidad) throws SQLException;
+    public void actualizarSaldo(int idCuenta, double nuevaCantidad) throws SQLException;
 }

@@ -51,6 +51,7 @@ public class InterfazController {
     @FXML
     void volverAtras(ActionEvent event) {
         panelInicio.toFront();
+        tblCuenta_Inicio.refresh();
     }
 
     private static BancoBDDAO daoBanco;
@@ -257,7 +258,8 @@ public class InterfazController {
                 // Comprobar el usuario
                 daoBanco.iniciarSesion(nombre, contrasena);
                 if (inicioSesion) {
-                    //Obtener cuentas del usuario porque solamente se quiere una cuenta con Pium activado por usuario
+                    // Obtener cuentas del usuario porque solamente se quiere una cuenta con Pium
+                    // activado por usuario
                     List<CuentaBancaria> cuentasUsuario = daoBanco.obtenerCuentasUsuario(nombre);
                     // Comprobar si alguna cuenta tiene Pium activado
                     boolean tieneCuentaConPium = false;
@@ -314,8 +316,23 @@ public class InterfazController {
     private TableColumn<CuentaBancaria, Double> colSaldo_Ingresar;
 
     @FXML
-    void ingresar(ActionEvent event) {
-
+    void ingresar(ActionEvent event) throws SQLException {
+        try {
+            double cantidad = Double.parseDouble(tfCantidad_Ingresar.getText().trim());
+            CuentaBancaria cuentaSeleccionada = tblCuenta_Ingresar.getSelectionModel().getSelectedItem();
+            if (cuentaSeleccionada != null) {
+                // Actualizar en la base de datos
+                daoBanco.actualizarSaldo(cuentaSeleccionada.getNumCuenta(), cuentaSeleccionada.getSaldo() + cantidad);
+                cuentaSeleccionada.setSaldo(cuentaSeleccionada.getSaldo() + cantidad);
+                mostrarAviso("Éxito", "Ingreso realizado correctamente", AlertType.INFORMATION);
+                tblCuenta_Ingresar.refresh();
+            } else {
+                mostrarAviso("Error", "Selecciona una cuenta de la tabla", AlertType.ERROR);
+            }
+        } catch (NumberFormatException e) {
+            mostrarAviso("Error", "Introduce un número válido en la cantidad", AlertType.ERROR);
+            tfCantidad_Ingresar.clear();
+        }
     }
 
     // ---------- SACAR DINERO ---------- //
@@ -339,8 +356,24 @@ public class InterfazController {
     private TableColumn<CuentaBancaria, Double> colSaldo_Sacar;
 
     @FXML
-    void sacar(ActionEvent event) {
-
+    void sacar(ActionEvent event) throws SQLException {
+        double cantidad = Double.parseDouble(tfCantidad_Sacar.getText().trim());
+        CuentaBancaria cuentaSeleccionada = tblCuenta_Sacar.getSelectionModel().getSelectedItem();
+        if (cuentaSeleccionada != null) {
+            //Comprobar que no se pueda sacar más dinero del que hay en la cuenta
+            if (cantidad <= cuentaSeleccionada.getSaldo()) {
+                // Actualizar en la base de datos
+                daoBanco.actualizarSaldo(cuentaSeleccionada.getNumCuenta(), cuentaSeleccionada.getSaldo() - cantidad);
+                cuentaSeleccionada.setSaldo(cuentaSeleccionada.getSaldo() - cantidad);
+                mostrarAviso("Éxito", "Retirada de dinero realizada correctamente", AlertType.INFORMATION);
+                tblCuenta_Sacar.refresh();
+            } else {
+                mostrarAviso("Error", "No puedes sacar más dinero del que tienes en la cuenta", AlertType.ERROR);
+                tfCantidad_Sacar.clear();
+            }
+        } else {
+            mostrarAviso("Error", "Selecciona una cuenta de la tabla", AlertType.ERROR);
+        }
     }
 
     // ---------- HACER PIUM (TRANSFERIR) ---------- //

@@ -33,7 +33,7 @@ public class BancoBDTest implements BancoBDDAO {
     }
 
     @Override
-    public void ActualizarSaldo(double nuevaCantidad) throws SQLException {
+    public void actualizarSaldo(int idCuenta, double nuevaCantidad) throws SQLException {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'ActualizarSaldo'");
     }

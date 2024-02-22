@@ -147,33 +147,13 @@ public class BancoBD implements BancoBDDAO {
 
     // SIN IMPLEMENTAR
     @Override
-    public void ActualizarSaldo(double nuevaCantidad) throws SQLException {
-        PreparedStatement st = conn.prepareStatement("UPDATE cuentas_bancarias SET cantidad = ? WHERE id = ?");
-        st.setDouble(1, nuevaCantidad);
-        st.setInt(2, 1); // Aquí va el ID de la cuenta
-        st.executeUpdate();
+    public void actualizarSaldo(int numCuenta, double cantidad) throws SQLException {
+        final String CONSULTA = "UPDATE cuenta_bancaria SET saldo = ? WHERE num_cuenta = ?";
+        try (PreparedStatement st = conn.prepareStatement(CONSULTA)) {
+            st.setDouble(1, cantidad);
+            st.setInt(2, numCuenta);
+            st.executeUpdate();
+        }
     }
-
-    // REPLANTEAR
-    // @Override
-    // public List<CuentaBancaria> mostrarCuentas(String nombre) throws SQLException
-    // {
-    // List<CuentaBancaria> cuentas = new ArrayList<>();
-    // final String CONSULTA = "SELECT * FROM cuentas_bancarias WHERE id_usuario =
-    // (SELECT id, nombre FROM usuarios WHERE nombre = ? )";
-    // PreparedStatement ps = conn.prepareStatement(CONSULTA);
-    // ps.setString(1, nombre);
-    // ResultSet rs = ps.executeQuery();
-    // while (rs.next()) {
-    // int idCuenta = rs.getInt("id");
-    // int idUsuario = rs.getInt("id_usuario");
-    // String telefono = rs.getString("telefono");
-    // double saldo = rs.getDouble("saldo");
-    // boolean tieneBizum = rs.getBoolean("tiene_bizum");
-    // cuentas.add(new CuentaBancaria(idCuenta, idUsuario, telefono, saldo,
-    // tieneBizum));
-    // }
-    // return cuentas;
-    // }
 
 }
