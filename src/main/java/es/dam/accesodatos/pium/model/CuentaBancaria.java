@@ -2,13 +2,13 @@ package es.dam.accesodatos.pium.model;
 
 public class CuentaBancaria {
 
-    private int id;
+    private int numCuenta;
     private int idUsuario;
     private double saldo;
     private boolean tieneBizum;
     
-    public CuentaBancaria(int id, int idUsuario, double saldo, boolean tieneBizum) {
-        this.id = id;
+    public CuentaBancaria(int numCuenta, int idUsuario, double saldo, boolean tieneBizum) {
+        this.numCuenta = numCuenta;
         this.idUsuario = idUsuario;
         this.saldo = saldo;
         this.tieneBizum = tieneBizum;
@@ -22,12 +22,12 @@ public class CuentaBancaria {
         return tieneBizum;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public int getIdUsuario() {
         return idUsuario;
+    }
+
+    public int getNumCuenta() {
+        return numCuenta;
     }
     
 }

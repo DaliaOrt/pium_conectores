@@ -96,7 +96,7 @@
                   </Button>
                   <TableView fx:id="tblCuenta_Inicio" layoutX="45.0" layoutY="140.0" prefHeight="124.0" prefWidth="440.0" style="-fx-background-color: #ede5ce; -fx-border-color: #a70c82;">
                      <columns>
-                        <TableColumn fx:id="colID_Inicio" editable="false" prefWidth="97.0" text="ID Cuenta" />
+                        <TableColumn fx:id="colID_Inicio" editable="false" prefWidth="97.0" text="Número de cuenta" />
                         <TableColumn fx:id="colSaldo_Inicio" editable="false" prefWidth="342.0" text="Saldo (€)" />
                      </columns>
                      <columnResizePolicy>
@@ -218,7 +218,7 @@
                   </Button>
                   <TableView fx:id="tblCuenta_Ingresar" layoutX="45.0" layoutY="140.0" prefHeight="138.0" prefWidth="440.0" style="-fx-background-color: #ede5ce; -fx-border-color: #a70c82;">
                      <columns>
-                        <TableColumn fx:id="colID_Ingresar" editable="false" prefWidth="97.0" text="ID Cuenta" />
+                        <TableColumn fx:id="colID_Ingresar" editable="false" prefWidth="97.0" text="Número de cuenta" />
                         <TableColumn fx:id="colSaldo_Ingresar" editable="false" prefWidth="342.0" text="Saldo (€)" />
                      </columns>
                      <columnResizePolicy>
@@ -263,7 +263,7 @@
                   </Label>
                   <TableView fx:id="tblCuenta_Sacar" layoutX="45.0" layoutY="140.0" prefHeight="138.0" prefWidth="440.0" style="-fx-background-color: #ede5ce; -fx-border-color: #a70c82;">
                      <columns>
-                        <TableColumn fx:id="colID_Sacar" editable="false" prefWidth="97.0" text="ID Cuenta" />
+                        <TableColumn fx:id="colID_Sacar" editable="false" prefWidth="97.0" text="Número de cuenta" />
                         <TableColumn fx:id="colSaldo_Sacar" editable="false" prefWidth="342.0" text="Saldo (€)" />
                      </columns>
                      <columnResizePolicy>

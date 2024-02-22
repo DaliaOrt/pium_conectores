@@ -69,45 +69,63 @@ public class BancoBD implements BancoBDDAO {
         ps.setString(1, nombreUsuario);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
-            int id = rs.getInt("id");
+            int numCuenta = rs.getInt("num_cuenta");
             int idUsuario = rs.getInt("id_usuario");
             double saldo = rs.getDouble("saldo");
             boolean tieneBizum = rs.getBoolean("tiene_bizum");
 
-            CuentaBancaria cuenta = new CuentaBancaria(id, idUsuario, saldo, tieneBizum);
+            CuentaBancaria cuenta = new CuentaBancaria(numCuenta, idUsuario, saldo, tieneBizum);
             cuentas.add(cuenta);
         }
         return cuentas;
     }
 
-    // @Override
-    // public Usuario obtenerUsuario(String nombreUsuario) throws SQLException {
-    // Usuario usuario = null;
-    // final String CONSULTA = "SELECT * FROM usuario WHERE nombre = ?";
+    @Override
+    public Usuario obtenerUsuario(String nombreUsuario) throws SQLException {
+        Usuario usuario = null;
+        final String CONSULTA = "SELECT * FROM usuario WHERE nombre = ?";
 
-    // try (PreparedStatement ps = conn.prepareStatement(CONSULTA)) {
-    // ps.setString(1, nombreUsuario);
-    // try (ResultSet rs = ps.executeQuery()) {
-    // if (rs.next()) {
-    // String nombre = rs.getString("nombre");
-    // String apellido = rs.getString("apellido");
-    // String contrasena = rs.getString("contrasena");
+        try (PreparedStatement ps = conn.prepareStatement(CONSULTA)) {
+            ps.setString(1, nombreUsuario);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String nombre = rs.getString("nombre");
+                    String apellido = rs.getString("apellido");
+                    String telefono = rs.getString("telefono");
+                    String contrasena = rs.getString("contrasena");
 
-    // usuario = new Usuario(nombre, apellido, contrasena);
-    // }
-    // }
-    // }
+                    usuario = new Usuario(nombre, apellido, telefono, contrasena);
+                }
+            }
+        }
 
-    // return usuario;
-    // }
+        return usuario;
+    }
+
+    @Override
+    public int obtenerIdUsuario(String nombreUsuario) throws SQLException {
+        final String CONSULTA = "SELECT id from usuario WHERE nombre = ?";
+        int id = 0;
+        try(PreparedStatement ps = conn.prepareStatement(CONSULTA)) {
+            ps.setString(1, nombreUsuario );
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    id = rs.getInt("id");
+                }
+            }
+        }
+
+        return id;
+    }
 
     @Override
     public void crearCuenta(CuentaBancaria cuenta) throws SQLException {
-        final String INSERTAR = "INSERT INTO cuenta_bancaria (id_usuario, tiene_bizum) VALUES (?, ?)";
+        final String INSERTAR = "INSERT INTO cuenta_bancaria (num_cuenta, id_usuario, tiene_bizum) VALUES (?, ?, ?)";
 
         PreparedStatement ps = conn.prepareStatement(INSERTAR);
-        ps.setInt(1, cuenta.getIdUsuario());
-        ps.setBoolean(2, cuenta.isTieneBizum());
+        ps.setInt(1, cuenta.getNumCuenta());
+        ps.setInt(2, cuenta.getIdUsuario());
+        ps.setBoolean(3, cuenta.isTieneBizum());
         ps.executeUpdate();
     }
 

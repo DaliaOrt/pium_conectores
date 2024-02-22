@@ -1,6 +1,8 @@
 package es.dam.accesodatos.pium;
 
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Random;
 
 import es.dam.accesodatos.pium.model.CuentaBancaria;
 import es.dam.accesodatos.pium.model.Usuario;
@@ -20,6 +22,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
 
 public class InterfazController {
@@ -82,17 +85,17 @@ public class InterfazController {
 
             // Asignar las cuentas a la tabla en la pantalla de inicio
             tblCuenta_Inicio.setItems(cuentas);
-            colID_Inicio.setCellValueFactory(new PropertyValueFactory<>("id"));
+            colID_Inicio.setCellValueFactory(new PropertyValueFactory<>("numCuenta"));
             colSaldo_Inicio.setCellValueFactory(new PropertyValueFactory<>("saldo"));
 
             // Asignar las cuentas a la tabla en la pantalla de ingresar
             tblCuenta_Ingresar.setItems(cuentas);
-            colID_Ingresar.setCellValueFactory(new PropertyValueFactory<>("id"));
+            colID_Ingresar.setCellValueFactory(new PropertyValueFactory<>("numCuenta"));
             colSaldo_Ingresar.setCellValueFactory(new PropertyValueFactory<>("saldo"));
 
             // Asignar las cuentas a la tabla en la pantalla de sacar dinero
             tblCuenta_Sacar.setItems(cuentas);
-            colID_Sacar.setCellValueFactory(new PropertyValueFactory<>("id"));
+            colID_Sacar.setCellValueFactory(new PropertyValueFactory<>("numCuenta"));
             colSaldo_Sacar.setCellValueFactory(new PropertyValueFactory<>("saldo"));
 
         } else {
@@ -207,6 +210,16 @@ public class InterfazController {
     // ---------- CREAR CUENTA ---------- //
 
     @FXML
+    public void initialize() {
+        // Hacer que solamente se pueda seleccionar una opción
+        ToggleGroup toggleGroup = new ToggleGroup();
+        rbSi.setToggleGroup(toggleGroup);
+        rbNo.setToggleGroup(toggleGroup);
+
+        rbSi.setSelected(true);
+    }
+
+    @FXML
     private TextField tfNombre_Crear;
 
     @FXML
@@ -225,8 +238,59 @@ public class InterfazController {
     private Button btnAtras_Crear;
 
     @FXML
-    void crear(ActionEvent event) {
+    void crear(ActionEvent event) throws SQLException {
+        String nombre = tfNombre_Crear.getText().trim();
+        String contrasena = tfContrasena_Crear.getText().trim();
+        boolean tieneBizum = rbSi.isSelected();
+        boolean inicioSesion = daoBanco.iniciarSesion(nombre, contrasena);
+        double saldo = 0;
+        int idUsuario = daoBanco.obtenerIdUsuario(nombre);
 
+        // Asignar un número de 4 cifras aleatorio a la nueva cuenta
+        Random random = new Random();
+        int numCuenta = random.nextInt(9000) + 1000;
+
+        iniciarConexion();
+
+        if (!nombre.isEmpty() && !contrasena.isEmpty()) {
+            try {
+                // Comprobar el usuario
+                daoBanco.iniciarSesion(nombre, contrasena);
+                if (inicioSesion) {
+                    //Obtener cuentas del usuario porque solamente se quiere una cuenta con Pium activado por usuario
+                    List<CuentaBancaria> cuentasUsuario = daoBanco.obtenerCuentasUsuario(nombre);
+                    // Comprobar si alguna cuenta tiene Pium activado
+                    boolean tieneCuentaConPium = false;
+                    for (CuentaBancaria cuenta : cuentasUsuario) {
+                        if (cuenta.isTieneBizum()) {
+                            tieneCuentaConPium = true;
+                            break;
+                        }
+                    }
+                    if (tieneCuentaConPium) {
+                        mostrarAviso("Error", "Ya tienes una cuenta con Pium activado", AlertType.ERROR);
+                        return;
+                    }
+                    CuentaBancaria cuenta = new CuentaBancaria(numCuenta, idUsuario, saldo, tieneBizum);
+                    daoBanco.crearCuenta(cuenta);
+                    cuentas.add(cuenta);
+                    mostrarAviso("Éxito", "Cuenta creada correctamente", AlertType.INFORMATION);
+                    tfNombre_Crear.clear();
+                    tfContrasena_Crear.clear();
+                    panelInicio.toFront();
+                } else {
+                    mostrarAviso("Error", "Usuario o contraseña incorrectos", AlertType.ERROR);
+                    tfNombre_Crear.clear();
+                    tfContrasena_Crear.clear();
+                }
+            } catch (SQLException e) {
+                mostrarAviso("Error",
+                        "Ocurrió un error al intentar registrar al usuario. Por favor, inténtalo nuevamente más tarde",
+                        AlertType.ERROR);
+            }
+        } else {
+            mostrarAviso("Error", "Llena los campos de nombre y contraseña", AlertType.ERROR);
+        }
     }
 
     // ---------- INGRESAR DINERO ---------- //
