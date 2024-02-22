@@ -20,17 +20,17 @@ public class BancoBDTest implements BancoBDDAO {
         throw new UnsupportedOperationException("Unimplemented method 'registrarUsuario'");
     }
 
-    @Override
-    public List<CuentaBancaria> mostrarCuentas(String nombre) throws SQLException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'mostrarCuentas'");
-    }
+    // @Override
+    // public List<CuentaBancaria> mostrarCuentas(String nombre) throws SQLException {
+    //     // TODO Auto-generated method stub
+    //     throw new UnsupportedOperationException("Unimplemented method 'mostrarCuentas'");
+    // }
 
-    @Override
-    public Usuario obtenerUsuario(String nombreUsuario) throws SQLException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'obtenerUsuario'");
-    }
+    // @Override
+    // public Usuario obtenerUsuario(String nombreUsuario) throws SQLException {
+    //     // TODO Auto-generated method stub
+    //     throw new UnsupportedOperationException("Unimplemented method 'obtenerUsuario'");
+    // }
 
     @Override
     public double obtenerSaldo() throws SQLException {
@@ -45,9 +45,15 @@ public class BancoBDTest implements BancoBDDAO {
     }
 
     @Override
-    public void crearCuenta() {
+    public void crearCuenta(CuentaBancaria cuenta) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'crearCuenta'");
+    }
+
+    @Override
+    public List<CuentaBancaria> obtenerCuentasUsuario(String nombreUsuario) throws SQLException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'obtenerCuentasUsuario'");
     }
 
 }

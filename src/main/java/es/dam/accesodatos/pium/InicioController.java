@@ -63,13 +63,13 @@ public class InicioController extends ControladorVistas {
         // TO DO - NO FUNCIONA
         // cargarTabla(daoBanco.mostrarCuentas(nombre));
 
-        tblCuenta.setItems(cuentas);
+        // tblCuenta.setItems(cuentas);
 
-        if (EntrarController.nombre != null) {
-            lblNombre.setText(EntrarController.nombre);
-        } else {
-            lblNombre.setText("---");
-        }
+        // if (EntrarController.nombre != null) {
+        //     lblNombre.setText(EntrarController.nombre);
+        // } else {
+        //     lblNombre.setText("---");
+        // }
     }
 
     // private void cargarTabla(List<CuentaBancaria> lista) {

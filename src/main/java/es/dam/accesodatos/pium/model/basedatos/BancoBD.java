@@ -28,14 +28,13 @@ public class BancoBD implements BancoBDDAO {
 
     @Override
     public void registrarUsuario(Usuario usuario) throws SQLException {
-        final String INSERTAR = "INSERT INTO usuarios (nombre, apellido, contrasena) VALUES (?,?,?)";
+        final String INSERTAR = "INSERT INTO usuario (nombre, apellido, telefono, contrasena) VALUES (?, ?, ?, ?)";
 
-        PreparedStatement ps = null;
-
-        ps = conn.prepareStatement(INSERTAR);
+        PreparedStatement ps = conn.prepareStatement(INSERTAR);
         ps.setString(1, usuario.getNombre());
-        ps.setString(2, usuario.getApellidos());
-        ps.setString(3, usuario.getContrasena());
+        ps.setString(2, usuario.getApellido());
+        ps.setString(3, usuario.getTelefono());
+        ps.setString(4, usuario.getContrasena());
         ps.executeUpdate();
 
     }
@@ -43,7 +42,7 @@ public class BancoBD implements BancoBDDAO {
     @Override
     public boolean iniciarSesion(String nombre, String contrasena) throws SQLException {
         boolean inicioSesion = false;
-        final String CONSULTA = "SELECT * FROM usuarios WHERE nombre = ? AND contrasena = ?";
+        final String CONSULTA = "SELECT * FROM usuario WHERE nombre = ? AND contrasena = ?";
         PreparedStatement ps = conn.prepareStatement(CONSULTA);
         ps.setString(1, nombre);
         ps.setString(2, contrasena);
@@ -60,36 +59,63 @@ public class BancoBD implements BancoBDDAO {
     }
 
     @Override
-    public Usuario obtenerUsuario(String nombreUsuario) throws SQLException {
-        Usuario usuario = null;
-        final String CONSULTA = "SELECT * FROM usuarios WHERE nombre = ?";
+    public List<CuentaBancaria> obtenerCuentasUsuario(String nombreUsuario) throws SQLException {
+        List<CuentaBancaria> cuentas = new ArrayList<>();
+        final String CONSULTA = "SELECT cb.*, u.id AS id_usuario FROM cuenta_bancaria cb " +
+                "INNER JOIN usuario u ON cb.id_usuario = u.id " +
+                "WHERE u.nombre = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(CONSULTA)) {
-            ps.setString(1, nombreUsuario);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    String nombre = rs.getString("nombre");
-                    String apellido = rs.getString("apellido");
-                    String contrasena = rs.getString("contrasena");
+        PreparedStatement ps = conn.prepareStatement(CONSULTA);
+        ps.setString(1, nombreUsuario);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            int idUsuario = rs.getInt("id_usuario");
+            double saldo = rs.getDouble("saldo");
+            boolean tieneBizum = rs.getBoolean("tiene_bizum");
 
-                    usuario = new Usuario(nombre, apellido, contrasena);
-                }
-            }
+            CuentaBancaria cuenta = new CuentaBancaria(id, idUsuario, saldo, tieneBizum);
+            cuentas.add(cuenta);
         }
-
-        return usuario;
+        return cuentas;
     }
 
+    // @Override
+    // public Usuario obtenerUsuario(String nombreUsuario) throws SQLException {
+    // Usuario usuario = null;
+    // final String CONSULTA = "SELECT * FROM usuario WHERE nombre = ?";
+
+    // try (PreparedStatement ps = conn.prepareStatement(CONSULTA)) {
+    // ps.setString(1, nombreUsuario);
+    // try (ResultSet rs = ps.executeQuery()) {
+    // if (rs.next()) {
+    // String nombre = rs.getString("nombre");
+    // String apellido = rs.getString("apellido");
+    // String contrasena = rs.getString("contrasena");
+
+    // usuario = new Usuario(nombre, apellido, contrasena);
+    // }
+    // }
+    // }
+
+    // return usuario;
+    // }
+
     @Override
-    public void crearCuenta() {
-        final String INSERTAR = "INSERT INTO cuentas_bancarias (id_usuario, saldo) VALUES (?,?)";
+    public void crearCuenta(CuentaBancaria cuenta) throws SQLException {
+        final String INSERTAR = "INSERT INTO cuenta_bancaria (id_usuario, tiene_bizum) VALUES (?, ?)";
+
+        PreparedStatement ps = conn.prepareStatement(INSERTAR);
+        ps.setInt(1, cuenta.getIdUsuario());
+        ps.setBoolean(2, cuenta.isTieneBizum());
+        ps.executeUpdate();
     }
 
     public void hacerPium() {
 
     }
 
-    //SIN IMPLEMENTAR
+    // SIN IMPLEMENTAR
     @Override
     public double obtenerSaldo() throws SQLException {
         PreparedStatement st = conn.prepareStatement("SELECT saldo FROM cuentas_bancarias WHERE id = ?");
@@ -101,7 +127,7 @@ public class BancoBD implements BancoBDDAO {
         throw new SQLException("No se pudo obtener la cantidad existente de la base de datos.");
     }
 
-    //SIN IMPLEMENTAR
+    // SIN IMPLEMENTAR
     @Override
     public void ActualizarSaldo(double nuevaCantidad) throws SQLException {
         PreparedStatement st = conn.prepareStatement("UPDATE cuentas_bancarias SET cantidad = ? WHERE id = ?");
@@ -111,22 +137,25 @@ public class BancoBD implements BancoBDDAO {
     }
 
     // REPLANTEAR
-    @Override
-    public List<CuentaBancaria> mostrarCuentas(String nombre) throws SQLException {
-        List<CuentaBancaria> cuentas = new ArrayList<>();
-        final String CONSULTA = "SELECT * FROM cuentas_bancarias WHERE id_usuario = (SELECT id, nombre FROM usuarios WHERE nombre = ? )";
-        PreparedStatement ps = conn.prepareStatement(CONSULTA);
-        ps.setString(1, nombre);
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            int idCuenta = rs.getInt("id");
-            int idUsuario = rs.getInt("id_usuario");
-            String telefono = rs.getString("telefono");
-            double saldo = rs.getDouble("saldo");
-            boolean tieneBizum = rs.getBoolean("tiene_bizum");
-            cuentas.add(new CuentaBancaria(idCuenta, idUsuario, telefono, saldo, tieneBizum));
-        }
-        return cuentas;
-    }
+    // @Override
+    // public List<CuentaBancaria> mostrarCuentas(String nombre) throws SQLException
+    // {
+    // List<CuentaBancaria> cuentas = new ArrayList<>();
+    // final String CONSULTA = "SELECT * FROM cuentas_bancarias WHERE id_usuario =
+    // (SELECT id, nombre FROM usuarios WHERE nombre = ? )";
+    // PreparedStatement ps = conn.prepareStatement(CONSULTA);
+    // ps.setString(1, nombre);
+    // ResultSet rs = ps.executeQuery();
+    // while (rs.next()) {
+    // int idCuenta = rs.getInt("id");
+    // int idUsuario = rs.getInt("id_usuario");
+    // String telefono = rs.getString("telefono");
+    // double saldo = rs.getDouble("saldo");
+    // boolean tieneBizum = rs.getBoolean("tiene_bizum");
+    // cuentas.add(new CuentaBancaria(idCuenta, idUsuario, telefono, saldo,
+    // tieneBizum));
+    // }
+    // return cuentas;
+    // }
 
 }

@@ -20,12 +20,11 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException, SQLException {
-        scene = new Scene(loadFXML("entrar"), 760, 550);
+        scene = new Scene(loadFXML("interfaz"), 760, 550);
         stage.setScene(scene);
         stage.show();
 
-        // Llama al método iniciarBaseDatos() al iniciar la aplicación
-        // Para crear base de datos, tablas y registros
+        // Llama al método iniciarBaseDatos() al iniciar la aplicación para crear base de datos, tablas y registros
         Controlador controlador = new Controlador();
         controlador.iniciarBaseDatos();
     }

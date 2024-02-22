@@ -6,26 +6,21 @@ import java.util.List;
 public class Usuario {
 
     private String nombre;
-    private String apellidos;
+    private String apellido;
+    private String telefono;
     private String contrasena;
     private List<CuentaBancaria> cuentas = new ArrayList<CuentaBancaria>();
     
-    public Usuario(String nombre, String apellidos, String contrasena) {
+    public Usuario(String nombre, String apellido, String telefono, String contrasena) {
         this.nombre = nombre;
-        this.apellidos = apellidos;
+        this.apellido = apellido;
+        this.telefono = telefono;
         this.contrasena = contrasena;
     }
-
-    public Usuario() {}
 
     public String getNombre() {
         return nombre;
     }
-
-    public String getApellidos() {
-        return apellidos;
-    }
-
 
     public String getContrasena() {
         return contrasena;
@@ -35,8 +30,12 @@ public class Usuario {
         return cuentas;
     }
 
-    public void agregarCuenta(CuentaBancaria cuenta) {
-        cuentas.add(cuenta);
+    public String getApellido() {
+        return apellido;
+    }
+
+    public String getTelefono() {
+        return telefono;
     }
     
 }

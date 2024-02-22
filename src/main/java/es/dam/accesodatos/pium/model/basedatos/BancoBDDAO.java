@@ -11,9 +11,9 @@ public interface BancoBDDAO {
 
     public boolean iniciarSesion(String nombre, String contrasena) throws SQLException;
     public void registrarUsuario(Usuario usuario) throws SQLException;
-    public List<CuentaBancaria> mostrarCuentas(String nombre) throws SQLException;
-    public void crearCuenta();
-    public Usuario obtenerUsuario(String nombreUsuario) throws SQLException;
+    public List<CuentaBancaria> obtenerCuentasUsuario(String nombreUsuario) throws SQLException;
+    public void crearCuenta(CuentaBancaria cuenta) throws SQLException;
+    // public Usuario obtenerUsuario(String nombreUsuario) throws SQLException;
     public double obtenerSaldo() throws SQLException;
     public void ActualizarSaldo(double nuevaCantidad) throws SQLException;
 }
