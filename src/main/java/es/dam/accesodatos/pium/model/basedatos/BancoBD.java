@@ -106,8 +106,8 @@ public class BancoBD implements BancoBDDAO {
     public int obtenerIdUsuario(String nombreUsuario) throws SQLException {
         final String CONSULTA = "SELECT id from usuario WHERE nombre = ?";
         int id = 0;
-        try(PreparedStatement ps = conn.prepareStatement(CONSULTA)) {
-            ps.setString(1, nombreUsuario );
+        try (PreparedStatement ps = conn.prepareStatement(CONSULTA)) {
+            ps.setString(1, nombreUsuario);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     id = rs.getInt("id");
@@ -129,23 +129,28 @@ public class BancoBD implements BancoBDDAO {
         ps.executeUpdate();
     }
 
-    public void hacerPium() {
-
-    }
-
-    // SIN IMPLEMENTAR
     @Override
-    public double obtenerSaldo() throws SQLException {
-        PreparedStatement st = conn.prepareStatement("SELECT saldo FROM cuentas_bancarias WHERE id = ?");
-        st.setInt(1, 1); // ID de la cuenta
-        ResultSet rs = st.executeQuery();
-        if (rs.next()) {
-            return rs.getDouble("saldo");
+    public boolean tieneCuentaBizum(String nombreUsuario) throws SQLException {
+        final String CONSULTA = "SELECT COUNT(*) FROM cuenta_bancaria cb " +
+                "JOIN usuario u ON cb.id_usuario = u.id " +
+                "WHERE u.nombre = ? AND cb.tiene_bizum = TRUE";
+
+        boolean tieneBizum = false;
+
+        try (PreparedStatement ps = conn.prepareStatement(CONSULTA)) {
+            ps.setString(1, nombreUsuario);
+            try (ResultSet rs = ps.executeQuery()) {
+                // Si el resultado tiene al menos una fila el usuario tiene una cuenta con bizum
+                // activado
+                if (rs.next()) {
+                    tieneBizum = rs.getInt(1) > 0;
+                }
+            }
         }
-        throw new SQLException("No se pudo obtener la cantidad existente de la base de datos.");
+
+        return tieneBizum;
     }
 
-    // SIN IMPLEMENTAR
     @Override
     public void actualizarSaldo(int numCuenta, double cantidad) throws SQLException {
         final String CONSULTA = "UPDATE cuenta_bancaria SET saldo = ? WHERE num_cuenta = ?";
@@ -154,6 +159,79 @@ public class BancoBD implements BancoBDDAO {
             st.setInt(2, numCuenta);
             st.executeUpdate();
         }
+    }
+
+    @Override
+    public boolean existeUsuario(String nombreUsuario) throws SQLException {
+        final String CONSULTA = "SELECT COUNT(*) FROM usuario WHERE nombre = ?";
+        boolean nombreExiste = false;
+
+        try (PreparedStatement ps = conn.prepareStatement(CONSULTA)) {
+            ps.setString(1, nombreUsuario);
+            try (ResultSet rs = ps.executeQuery()) {
+                // Si el resultado tiene al menos una fila el nombre de usuario existe
+                if (rs.next()) {
+                    nombreExiste = rs.getInt(1) > 0;
+                }
+            }
+        }
+
+        return nombreExiste;
+    }
+
+    @Override
+    public double obtenerSaldoCuenta(String nombreUsuario) throws SQLException {
+        final String CONSULTA = "SELECT saldo FROM cuenta_bancaria WHERE id_usuario = (SELECT id FROM usuario WHERE nombre = ?)";
+        double saldo = 0.0;
+
+        try (PreparedStatement ps = conn.prepareStatement(CONSULTA)) {
+            ps.setString(1, nombreUsuario);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                saldo = rs.getDouble("saldo");
+            }
+        }
+        return saldo;
+
+    }
+
+    @Override
+    public double obtenerSaldoCuentaPium(String nombreUsuario) throws SQLException {
+        final String CONSULTA = "SELECT saldo FROM cuenta_bancaria WHERE id_usuario = (SELECT id FROM usuario WHERE nombre = ?) AND tiene_bizum = 1";
+        double saldo = 0.0;
+
+        try (PreparedStatement ps = conn.prepareStatement(CONSULTA)) {
+            ps.setString(1, nombreUsuario);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                saldo = rs.getDouble("saldo");
+            }
+        }
+        return saldo;
+    }
+
+    @Override
+    public void hacerPium(String nombreRemitente, String nombreDestinatario, double cantidad) throws SQLException {
+        final String ACTUALIZAR_REMITE = "UPDATE cuenta_bancaria SET saldo = saldo - ? WHERE id_usuario = (SELECT id FROM usuario WHERE nombre = ?) AND tiene_bizum = 1";
+        final String ACTUALIZAR_DESTINO = "UPDATE cuenta_bancaria SET saldo = saldo + ? WHERE id_usuario = (SELECT id FROM usuario WHERE nombre = ?) AND tiene_bizum = 1";
+        double saldoRemitente = obtenerSaldoCuenta(nombreRemitente);
+        // Comprobar que remitente tiene suficiente saldo
+        if (saldoRemitente >= cantidad) {
+            PreparedStatement ps = conn.prepareStatement(ACTUALIZAR_REMITE);
+            ps.setDouble(1, cantidad);
+            ps.setString(2, nombreRemitente);
+            ps.executeUpdate();
+            PreparedStatement ps2 = conn.prepareStatement(ACTUALIZAR_DESTINO);
+            ps2.setDouble(1, cantidad);
+            ps2.setString(2, nombreDestinatario);
+            ps2.executeUpdate();
+
+            // conn.commit();
+        } else {
+            conn.rollback();
+            throw new SQLException("Saldo insuficiente en la cuenta del remitente");
+        }
+
     }
 
 }

@@ -51,7 +51,8 @@ public class InterfazController {
     @FXML
     void volverAtras(ActionEvent event) {
         panelInicio.toFront();
-        tblCuenta_Inicio.refresh();
+        actualizarTablas();
+        vaciarCajasTexto();
     }
 
     private static BancoBDDAO daoBanco;
@@ -191,21 +192,30 @@ public class InterfazController {
     @FXML
     void crearCuenta(ActionEvent event) {
         panelCrear.toFront();
+        vaciarCajasTexto();
     }
 
     @FXML
     void sacarDinero(ActionEvent event) {
         panelSacar.toFront();
+        vaciarCajasTexto();
     }
 
     @FXML
     void hacerPium(ActionEvent event) {
         panelPium.toFront();
+        vaciarCajasTexto();
+        lblComprobar.setVisible(false);
+        tfCantidad_Pium.setEditable(false);
+        tfCantidad_Pium.setDisable(true);
+        tfNombre_Pium.setEditable(true);
+        tfNombre_Pium.setDisable(false);
     }
 
     @FXML
     void ingresarDinero(ActionEvent event) {
         panelIngresar.toFront();
+        vaciarCajasTexto();
     }
 
     // ---------- CREAR CUENTA ---------- //
@@ -325,7 +335,7 @@ public class InterfazController {
                 daoBanco.actualizarSaldo(cuentaSeleccionada.getNumCuenta(), cuentaSeleccionada.getSaldo() + cantidad);
                 cuentaSeleccionada.setSaldo(cuentaSeleccionada.getSaldo() + cantidad);
                 mostrarAviso("Éxito", "Ingreso realizado correctamente", AlertType.INFORMATION);
-                tblCuenta_Ingresar.refresh();
+                actualizarTablas();
             } else {
                 mostrarAviso("Error", "Selecciona una cuenta de la tabla", AlertType.ERROR);
             }
@@ -360,13 +370,13 @@ public class InterfazController {
         double cantidad = Double.parseDouble(tfCantidad_Sacar.getText().trim());
         CuentaBancaria cuentaSeleccionada = tblCuenta_Sacar.getSelectionModel().getSelectedItem();
         if (cuentaSeleccionada != null) {
-            //Comprobar que no se pueda sacar más dinero del que hay en la cuenta
+            // Comprobar que no se pueda sacar más dinero del que hay en la cuenta
             if (cantidad <= cuentaSeleccionada.getSaldo()) {
                 // Actualizar en la base de datos
                 daoBanco.actualizarSaldo(cuentaSeleccionada.getNumCuenta(), cuentaSeleccionada.getSaldo() - cantidad);
                 cuentaSeleccionada.setSaldo(cuentaSeleccionada.getSaldo() - cantidad);
                 mostrarAviso("Éxito", "Retirada de dinero realizada correctamente", AlertType.INFORMATION);
-                tblCuenta_Sacar.refresh();
+                actualizarTablas();
             } else {
                 mostrarAviso("Error", "No puedes sacar más dinero del que tienes en la cuenta", AlertType.ERROR);
                 tfCantidad_Sacar.clear();
@@ -398,13 +408,82 @@ public class InterfazController {
 
     @FXML
     void comprobar(ActionEvent event) {
+        String nombre = tfNombre_Pium.getText().trim();
 
+        if (!nombre.isEmpty()) {
+            if (!lblNombre_Inicio.getText().trim().equals(nombre)) {
+                try {
+                    iniciarConexion();
+                    boolean nombreExiste = daoBanco.existeUsuario(nombre);
+                    if (nombreExiste) {
+                        boolean tieneBizum = daoBanco.tieneCuentaBizum(nombre);
+
+                        if (tieneBizum) {
+                            lblComprobar.setText("Ese usuario tiene cuenta Pium");
+                            lblComprobar.setVisible(true);
+                            tfCantidad_Pium.setEditable(true);
+                            tfCantidad_Pium.setDisable(false);
+                            tfNombre_Pium.setEditable(false);
+                            tfNombre_Pium.setDisable(true);
+                        } else {
+                            lblComprobar.setText("Ese usuario no tiene cuenta Pium");
+                            lblComprobar.setVisible(true);
+                            tfCantidad_Pium.setEditable(false);
+                            tfCantidad_Pium.setDisable(true);
+                        }
+                    } else {
+                        lblComprobar.setText("Ese usuario no existe en la base de datos");
+                        lblComprobar.setVisible(true);
+                        tfCantidad_Pium.setEditable(false);
+                        tfCantidad_Pium.setDisable(true);
+                        tfNombre_Pium.clear();
+                    }
+                } catch (SQLException e) {
+                    mostrarAviso("Error", "Ocurrió un error al comprobar la cuenta Bizum", AlertType.ERROR);
+                }
+            } else {
+                mostrarAviso("Error", "No puedes comprobar tu propia cuenta", AlertType.ERROR);
+                tfNombre_Pium.clear();
+            }
+        } else {
+            mostrarAviso("Error", "Introduce un nombre válido", AlertType.ERROR);
+        }
     }
 
     @FXML
     void transferir(ActionEvent event) {
+        String nombreDestino = tfNombre_Pium.getText().trim();
+        String cantidadTexto = tfCantidad_Pium.getText().trim();
+        String nombreRemite = lblNombre_Inicio.getText().trim();
 
+        if (!nombreDestino.isEmpty() && !cantidadTexto.isEmpty()) {
+            double cantidad = Double.parseDouble(cantidadTexto);
+            if (cantidad > 0) {
+                try {
+                    iniciarConexion();
+                    double saldoActual = daoBanco.obtenerSaldoCuentaPium(nombreRemite);
+                    if (cantidad <= saldoActual) {
+                        daoBanco.hacerPium(nombreRemite, nombreDestino, cantidad);
+                        mostrarAviso("Éxito", "Transferencia realizada correctamente", AlertType.INFORMATION);
+                        actualizarTablas();
+                        panelInicio.toFront();
+                    } else {
+                        mostrarAviso("Error", "La cantidad a transferir es mayor que el saldo disponible",
+                                AlertType.ERROR);
+                        tfCantidad_Pium.clear();
+                    }
+                } catch (SQLException e) {
+                    mostrarAviso("Error", "Ocurrió un error al realizar la transferencia", AlertType.ERROR);
+                }
+            } else {
+                mostrarAviso("Error", "La cantidad debe ser mayor que cero", AlertType.ERROR);
+            }
+        } else {
+            mostrarAviso("Error", "Introduce un nombre y una cantidad válidos", AlertType.ERROR);
+        }
     }
+
+    // ---------- AUXILIARES ---------- //
 
     private void iniciarConexion() throws SQLException {
         daoBanco = BancoBDFactory.getDAO(BancoBDFactory.MODO_SQL);
@@ -416,6 +495,27 @@ public class InterfazController {
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
         alerta.showAndWait();
+    }
+
+    private void vaciarCajasTexto() {
+        tfApellido_Regist.clear();
+        tfCantidad_Ingresar.clear();
+        tfCantidad_Pium.clear();
+        tfCantidad_Sacar.clear();
+        tfContrasena_Crear.clear();
+        tfContrasena_Entrar.clear();
+        tfContrasena_Regist.clear();
+        tfNombre_Crear.clear();
+        tfNombre_Entrar.clear();
+        tfNombre_Pium.clear();
+        tfNombre_Regist.clear();
+        tfTelefono_Regist.clear();
+    }
+
+    private void actualizarTablas() {
+        tblCuenta_Inicio.refresh();
+        tblCuenta_Ingresar.refresh();
+        tblCuenta_Sacar.refresh();
     }
 
 }

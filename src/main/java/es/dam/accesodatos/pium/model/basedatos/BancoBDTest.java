@@ -27,12 +27,6 @@ public class BancoBDTest implements BancoBDDAO {
     }
 
     @Override
-    public double obtenerSaldo() throws SQLException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'obtenerSaldo'");
-    }
-
-    @Override
     public void actualizarSaldo(int idCuenta, double nuevaCantidad) throws SQLException {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'ActualizarSaldo'");
@@ -54,6 +48,36 @@ public class BancoBDTest implements BancoBDDAO {
     public int obtenerIdUsuario(String nombreUsuario) throws SQLException {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'obtenerIdUsuario'");
+    }
+
+    @Override
+    public boolean tieneCuentaBizum(String nombreUsuario) throws SQLException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'tieneCuentaBizum'");
+    }
+
+    @Override
+    public boolean existeUsuario(String nombreUsuario) throws SQLException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'existeUsuario'");
+    }
+
+    @Override
+    public double obtenerSaldoCuenta(String nombreUsuario) throws SQLException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'obtenerSaldoCuenta'");
+    }
+
+    @Override
+    public void hacerPium(String nombreRemitente, String nombreDestinatario, double cantidad) throws SQLException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'hacerPium'");
+    }
+
+    @Override
+    public double obtenerSaldoCuentaPium(String nombreUsuario) throws SQLException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'obtenerSaldoCuentaPium'");
     }
 
 }
